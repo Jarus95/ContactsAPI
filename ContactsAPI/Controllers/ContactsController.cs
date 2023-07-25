@@ -15,9 +15,22 @@ namespace ContactsAPI.Controllers
         {
             this.dbContext = dbContext;
         }
+        [HttpGet]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> GetContactById([FromRoute] Guid id)
+        {
+            var contact = await dbContext.Contacts.FindAsync(id);
+
+            if (contact != null)
+            {
+                return Ok(contact);
+            }
+
+            return NotFound();
+        }
 
         [HttpGet]
-        public async Task<IActionResult> GetContacts()
+        public async Task<IActionResult> GetAllContacts()
         {
            return Ok(await dbContext.Contacts.ToListAsync());
         }
@@ -56,6 +69,22 @@ namespace ContactsAPI.Controllers
            }
 
            return NotFound();
+        }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteContact([FromRoute] Guid id)
+        {
+            var contact = await dbContext.Contacts.FindAsync(id);
+
+            if (contact != null)
+            {
+                dbContext.Remove(contact);
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+
+            return NotFound();
         }
     }
 }
