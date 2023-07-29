@@ -1,5 +1,6 @@
 ﻿using ContactsAPI.Data;
 using ContactsAPI.Models;
+using ContactsAPI.Services.ContactService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,80 +12,42 @@ namespace ContactsAPI.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly ContactAPIDbContext dbContext;
-        public ContactsController(ContactAPIDbContext dbContext)
+        private readonly IContactService contactService;
+        public ContactsController(ContactAPIDbContext dbContext, IContactService contactService)
         {
             this.dbContext = dbContext;
+            this.contactService = contactService;
         }
         [HttpGet]
         [Route("{id:guid}")]
-        public async Task<IActionResult> GetContactById([FromRoute] Guid id)
+        public async Task<ActionResult<Contact>> GetContactById([FromRoute] Guid id)
         {
-            var contact = await dbContext.Contacts.FindAsync(id);
-
-            if (contact != null)
-            {
-                return Ok(contact);
-            }
-
-            return NotFound();
+            return Ok(await contactService.GetContactById(id));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllContacts()
+        public async Task<ActionResult<List<Contact>>> GetAllContacts()
         {
-           return Ok(await dbContext.Contacts.ToListAsync());
+           return Ok(await contactService.GetAllContacts());
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddContacts(AddContactRequest addContactRequest)
+        public async Task<ActionResult<Contact>> AddContacts(AddContactRequest addContactRequest)
         {
-            var contact = new Contact()
-            {
-                Id = Guid.NewGuid(),
-                Adress = addContactRequest.Adress,
-                Email = addContactRequest.Email,
-                FullName = addContactRequest.FullName,
-                Phone = addContactRequest.Phone
-            };
-
-            await dbContext.Contacts.AddAsync(contact);
-            await dbContext.SaveChangesAsync();
-
-            return Ok(contact);
+            return Ok(await contactService.AddContactRequest(addContactRequest));
         }
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
+        public async Task<ActionResult<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
         {
-           var contact = await dbContext.Contacts.FindAsync(id);
-
-           if(contact != null)
-           {
-                contact.Adress = updateContactRequest.Adress;
-                contact.Email = updateContactRequest.Email;
-                contact.FullName = updateContactRequest.FullName;
-                contact.Phone = updateContactRequest.Phone;
-                await dbContext.SaveChangesAsync();
-                return Ok(contact);
-           }
-
-           return NotFound();
+            return Ok(await contactService.UpdateContact(id, updateContactRequest));
         }
 
         [HttpDelete]
         [Route("{id:guid}")]
-        public async Task<IActionResult> DeleteContact([FromRoute] Guid id)
+        public async Task<ActionResult<Contact>> DeleteContact([FromRoute] Guid id)
         {
-            var contact = await dbContext.Contacts.FindAsync(id);
-
-            if (contact != null)
-            {
-                dbContext.Remove(contact);
-                await dbContext.SaveChangesAsync();
-                return Ok();
-            }
-
-            return NotFound();
+            return Ok(await contactService.DeleteContact(id));
         }
     }
 }
