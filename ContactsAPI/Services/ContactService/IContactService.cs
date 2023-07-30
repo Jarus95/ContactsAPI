@@ -5,10 +5,10 @@ namespace ContactsAPI.Services.ContactService
 {
     public interface IContactService
     {
-        Task<ActionResult<Contact>> GetContactById([FromRoute] Guid id);
-        Task<ActionResult<List<Contact>>> GetAllContacts();
-        Task<ActionResult<Contact>> AddContactRequest(AddContactRequest addContactRequest);
-        Task<ActionResult<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest);
-        Task<ActionResult<Contact>> DeleteContact([FromRoute] Guid id);
+        Task<ServiceResponse<Contact>> GetContactById([FromRoute] Guid id);
+        Task<ServiceResponse<List<Contact>>> GetAllContacts();
+        Task<ServiceResponse<Contact>> AddContactRequest(AddContactRequest addContactRequest);
+        Task<ServiceResponse<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest);
+        Task<ServiceResponse<Contact>> DeleteContact([FromRoute] Guid id);
     }
 }

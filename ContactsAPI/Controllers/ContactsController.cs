@@ -32,20 +32,20 @@ namespace ContactsAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Contact>> AddContacts(AddContactRequest addContactRequest)
+        public async Task<ActionResult<ServiceResponse<Contact>>> AddContacts(AddContactRequest addContactRequest)
         {
             return Ok(await contactService.AddContactRequest(addContactRequest));
         }
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<ActionResult<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
+        public async Task<ActionResult<ServiceResponse<Contact>>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
         {
             return Ok(await contactService.UpdateContact(id, updateContactRequest));
         }
 
         [HttpDelete]
         [Route("{id:guid}")]
-        public async Task<ActionResult<Contact>> DeleteContact([FromRoute] Guid id)
+        public async Task<ActionResult<ServiceResponse<Contact>>> DeleteContact([FromRoute] Guid id)
         {
             return Ok(await contactService.DeleteContact(id));
         }

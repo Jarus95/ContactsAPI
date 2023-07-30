@@ -15,8 +15,9 @@ namespace ContactsAPI.Services.ContactService
             this.dbContext = dbContext;
         }
 
-        public async Task<ActionResult<Contact>> AddContactRequest(AddContactRequest addContactRequest)
+        public async Task<ServiceResponse<Contact>> AddContactRequest(AddContactRequest addContactRequest)
         {
+            var serviceResponse = new ServiceResponse<Contact>();
             var contact = new Contact()
             {
                 Id = Guid.NewGuid(),
@@ -28,56 +29,56 @@ namespace ContactsAPI.Services.ContactService
 
             await dbContext.Contacts.AddAsync(contact);
             await dbContext.SaveChangesAsync();
+            serviceResponse.Data = contact;
 
-            return contact;
+            return serviceResponse;
         }
 
-        public async Task<ActionResult<Contact>> DeleteContact([FromRoute] Guid id)
+        public async Task<ServiceResponse<Contact>> DeleteContact([FromRoute] Guid id)
         {
+            var serviceResponse = new ServiceResponse<Contact>();
             var contact = await dbContext.Contacts.FindAsync(id);
+            serviceResponse.Data = contact;
 
             if (contact != null)
             {
                 dbContext.Remove(contact);
                 await dbContext.SaveChangesAsync();
-                return contact;
             }
 
-            throw new Exception("Not found");
+            return serviceResponse;
         }
 
-        public async Task<ActionResult<List<Contact>>> GetAllContacts()
+        public async Task<ServiceResponse<List<Contact>>> GetAllContacts()
         {
-            return await dbContext.Contacts.ToListAsync();
+            var serviceResponse = new ServiceResponse<List<Contact>>();
+            serviceResponse.Data = await dbContext.Contacts.ToListAsync();
+            return  serviceResponse;
         }
 
-        public async Task<ActionResult<Contact>> GetContactById([FromRoute] Guid id)
+        public async Task<ServiceResponse<Contact>> GetContactById([FromRoute] Guid id)
         {
+            var serviceResponse = new ServiceResponse<Contact>();
             var contact = await dbContext.Contacts.FindAsync(id);
-
-            if (contact != null)
-            {
-                return contact;
-            }
-
-            throw new Exception("Not found");
+            serviceResponse.Data = contact;
+            return serviceResponse;
         }
 
-        public async Task<ActionResult<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
+        public async Task<ServiceResponse<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
         {
+            var serviceResponse = new ServiceResponse<Contact>();
             var contact = await dbContext.Contacts.FindAsync(id);
-
             if (contact != null)
             {
                 contact.Adress = updateContactRequest.Adress;
                 contact.Email = updateContactRequest.Email;
                 contact.FullName = updateContactRequest.FullName;
                 contact.Phone = updateContactRequest.Phone;
+                serviceResponse.Data = contact;
                 await dbContext.SaveChangesAsync();
-                return contact;
             }
 
-            throw new Exception("Not found");
+            return serviceResponse;
         }
     }
 }
