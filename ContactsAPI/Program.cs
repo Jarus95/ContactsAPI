@@ -1,3 +1,4 @@
+global using AutoMapper;
 using ContactsAPI.Data;
 using ContactsAPI.Services.ContactService;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddDbContext<ContactAPIDbContext>(options => options.UseInMemoryDatabase("ContactDb"));
 builder.Services.AddDbContext<ContactAPIDbContext>(options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("ContactsApiConnectionString")));

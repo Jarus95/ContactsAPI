@@ -1,4 +1,6 @@
-﻿using ContactsAPI.Data;
+﻿
+using ContactsAPI.Data;
+using ContactsAPI.Dtos.Contacts;
 using ContactsAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,36 +11,30 @@ namespace ContactsAPI.Services.ContactService
     public class ContactService : IContactService
     {
         private readonly ContactAPIDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public ContactService(ContactAPIDbContext dbContext)
+        public ContactService(ContactAPIDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
+            
         }
 
-        public async Task<ServiceResponse<Contact>> AddContactRequest(AddContactRequest addContactRequest)
+        public async Task<ServiceResponse<GetContactsResponseDto>> AddContactRequest(AddContactRequestDto addContactRequest)
         {
-            var serviceResponse = new ServiceResponse<Contact>();
-            var contact = new Contact()
-            {
-                Id = Guid.NewGuid(),
-                Adress = addContactRequest.Adress,
-                Email = addContactRequest.Email,
-                FullName = addContactRequest.FullName,
-                Phone = addContactRequest.Phone
-            };
-
+            var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
+            var contact = mapper.Map<Contact>(addContactRequest);
             await dbContext.Contacts.AddAsync(contact);
             await dbContext.SaveChangesAsync();
-            serviceResponse.Data = contact;
-
+            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Contact>> DeleteContact([FromRoute] Guid id)
+        public async Task<ServiceResponse<GetContactsResponseDto>> DeleteContact([FromRoute] Guid id)
         {
-            var serviceResponse = new ServiceResponse<Contact>();
+            var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
             var contact = await dbContext.Contacts.FindAsync(id);
-            serviceResponse.Data = contact;
+            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
 
             if (contact != null)
             {
@@ -49,36 +45,37 @@ namespace ContactsAPI.Services.ContactService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Contact>>> GetAllContacts()
+        public async Task<ServiceResponse<List<GetContactsResponseDto>>> GetAllContacts()
         {
-            var serviceResponse = new ServiceResponse<List<Contact>>();
-            serviceResponse.Data = await dbContext.Contacts.ToListAsync();
+            var serviceResponse = new ServiceResponse<List<GetContactsResponseDto>>();
+            var contacts = await dbContext.Contacts.ToListAsync();
+            serviceResponse.Data = contacts.Select(c => mapper.Map<GetContactsResponseDto>(c)).ToList();
             return  serviceResponse;
         }
 
-        public async Task<ServiceResponse<Contact>> GetContactById([FromRoute] Guid id)
+        public async Task<ServiceResponse<GetContactsResponseDto>> GetContactById([FromRoute] Guid id)
         {
-            var serviceResponse = new ServiceResponse<Contact>();
+            var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
             var contact = await dbContext.Contacts.FindAsync(id);
-            serviceResponse.Data = contact;
+            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Contact>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
-        {
-            var serviceResponse = new ServiceResponse<Contact>();
-            var contact = await dbContext.Contacts.FindAsync(id);
-            if (contact != null)
-            {
-                contact.Adress = updateContactRequest.Adress;
-                contact.Email = updateContactRequest.Email;
-                contact.FullName = updateContactRequest.FullName;
-                contact.Phone = updateContactRequest.Phone;
-                serviceResponse.Data = contact;
-                await dbContext.SaveChangesAsync();
-            }
+        //public async Task<ServiceResponse<GetContactsResponseDto>> UpdateContact([FromRoute] Guid id, UpdateContactRequestDto updateContactRequest)
+        //{
+        //    var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
+        //    var contact = await dbContext.Contacts.FindAsync(id);
+        //    if (contact != null)
+        //    {
+        //        contact.Adress = updateContactRequest.Adress;
+        //        contact.Email = updateContactRequest.Email;
+        //        contact.FullName = updateContactRequest.FullName;
+        //        contact.Phone = updateContactRequest.Phone;
+        //        await dbContext.SaveChangesAsync();
+        //    }
+        //    serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
 
-            return serviceResponse;
-        }
+        //    return serviceResponse;
+        //}
     }
 }

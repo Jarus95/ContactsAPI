@@ -1,4 +1,5 @@
 ﻿using ContactsAPI.Data;
+using ContactsAPI.Dtos.Contacts;
 using ContactsAPI.Models;
 using ContactsAPI.Services.ContactService;
 using Microsoft.AspNetCore.Http;
@@ -32,16 +33,16 @@ namespace ContactsAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Contact>>> AddContacts(AddContactRequest addContactRequest)
+        public async Task<ActionResult<ServiceResponse<Contact>>> AddContacts(AddContactRequestDto addContactRequest)
         {
             return Ok(await contactService.AddContactRequest(addContactRequest));
         }
-        [HttpPut]
-        [Route("{id:guid}")]
-        public async Task<ActionResult<ServiceResponse<Contact>>> UpdateContact([FromRoute] Guid id, UpdateContactRequest updateContactRequest)
-        {
-            return Ok(await contactService.UpdateContact(id, updateContactRequest));
-        }
+        //[HttpPut]
+        //[Route("{id:guid}")]
+        //public async Task<ActionResult<ServiceResponse<Contact>>> UpdateContact([FromRoute] Guid id, UpdateContactRequestDto updateContactRequest)
+        //{
+        //    return Ok(await contactService.UpdateContact(id, updateContactRequest));
+        //}
 
         [HttpDelete]
         [Route("{id:guid}")]

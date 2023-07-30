@@ -1,6 +1,6 @@
-﻿namespace ContactsAPI.Models
+﻿namespace ContactsAPI.Dtos.Contacts
 {
-    public class UpdateContactRequest
+    public class UpdateContactRequestDto
     {
         public string FullName { get; set; }
         public string Email { get; set; }
