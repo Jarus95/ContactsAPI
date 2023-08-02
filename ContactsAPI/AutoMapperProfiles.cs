@@ -10,7 +10,8 @@ namespace ContactsAPI
         {
             CreateMap<Contact, GetContactsResponseDto>();   //Contact -> GetContactsResponseDto
             CreateMap<AddContactRequestDto, Contact>();     //AddContactRequestDto -> Contact
-            CreateMap<Contact, UpdateContactRequestDto>();  //Contact -> UpdateContactRequestDto
+            CreateMap<UpdateContactRequestDto, Contact>();
+            CreateMap<UpdateContactRequestDto, GetContactsResponseDto>(); //Contact -> UpdateContactRequestDto
         }
     }
 }

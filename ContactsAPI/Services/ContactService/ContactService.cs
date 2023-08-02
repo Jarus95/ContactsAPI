@@ -64,10 +64,10 @@ namespace ContactsAPI.Services.ContactService
         {
             var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
             var contact = await dbContext.Contacts.FirstAsync(c => c.Id == updateContactRequest.Id);
-            var mapContact = mapper.Map(contact, updateContactRequest);
+            var mapContact = mapper.Map(updateContactRequest, contact);
             await dbContext.SaveChangesAsync();
 
-            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
+            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(mapContact);
 
             return serviceResponse;
         }
