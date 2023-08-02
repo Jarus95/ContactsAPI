@@ -40,7 +40,11 @@ namespace ContactsAPI.Controllers
         [HttpPut]
         public async Task<ActionResult<ServiceResponse<Contact>>> UpdateContact(UpdateContactRequestDto updateContactRequest)
         {
-            return Ok(await contactService.UpdateContacts(updateContactRequest));
+            var response = await contactService.UpdateContacts(updateContactRequest);
+            if(response.Data == null)
+                return NotFound(response);
+
+            return Ok(response);
         }
 
         [HttpDelete]

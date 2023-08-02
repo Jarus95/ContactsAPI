@@ -63,11 +63,23 @@ namespace ContactsAPI.Services.ContactService
         public async Task<ServiceResponse<GetContactsResponseDto>> UpdateContacts(UpdateContactRequestDto updateContactRequest)
         {
             var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
-            var contact = await dbContext.Contacts.FirstAsync(c => c.Id == updateContactRequest.Id);
-            var mapContact = mapper.Map(updateContactRequest, contact);
-            await dbContext.SaveChangesAsync();
+            try 
+            {
+               var contact = await dbContext.Contacts.FirstOrDefaultAsync(c => c.Id == updateContactRequest.Id);
+                if (contact == null)
+                    throw new Exception($"Contact whith {updateContactRequest.Id} not found");
+               var mapContact = mapper.Map(updateContactRequest, contact);
+               await dbContext.SaveChangesAsync();
+               serviceResponse.Data = mapper.Map<GetContactsResponseDto>(mapContact);
+                
+            }
 
-            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(mapContact);
+            catch (Exception ex) 
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
 
             return serviceResponse;
         }
