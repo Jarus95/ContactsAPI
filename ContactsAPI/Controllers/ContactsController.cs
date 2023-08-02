@@ -37,12 +37,11 @@ namespace ContactsAPI.Controllers
         {
             return Ok(await contactService.AddContactRequest(addContactRequest));
         }
-        //[HttpPut]
-        //[Route("{id:guid}")]
-        //public async Task<ActionResult<ServiceResponse<Contact>>> UpdateContact([FromRoute] Guid id, UpdateContactRequestDto updateContactRequest)
-        //{
-        //    return Ok(await contactService.UpdateContact(id, updateContactRequest));
-        //}
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<Contact>>> UpdateContact(UpdateContactRequestDto updateContactRequest)
+        {
+            return Ok(await contactService.UpdateContacts(updateContactRequest));
+        }
 
         [HttpDelete]
         [Route("{id:guid}")]

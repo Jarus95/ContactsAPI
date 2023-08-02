@@ -4,7 +4,6 @@ using ContactsAPI.Dtos.Contacts;
 using ContactsAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace ContactsAPI.Services.ContactService
 {
@@ -17,7 +16,7 @@ namespace ContactsAPI.Services.ContactService
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
-            
+
         }
 
         public async Task<ServiceResponse<GetContactsResponseDto>> AddContactRequest(AddContactRequestDto addContactRequest)
@@ -50,7 +49,7 @@ namespace ContactsAPI.Services.ContactService
             var serviceResponse = new ServiceResponse<List<GetContactsResponseDto>>();
             var contacts = await dbContext.Contacts.ToListAsync();
             serviceResponse.Data = contacts.Select(c => mapper.Map<GetContactsResponseDto>(c)).ToList();
-            return  serviceResponse;
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetContactsResponseDto>> GetContactById([FromRoute] Guid id)
@@ -61,21 +60,16 @@ namespace ContactsAPI.Services.ContactService
             return serviceResponse;
         }
 
-        //public async Task<ServiceResponse<GetContactsResponseDto>> UpdateContact([FromRoute] Guid id, UpdateContactRequestDto updateContactRequest)
-        //{
-        //    var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
-        //    var contact = await dbContext.Contacts.FindAsync(id);
-        //    if (contact != null)
-        //    {
-        //        contact.Adress = updateContactRequest.Adress;
-        //        contact.Email = updateContactRequest.Email;
-        //        contact.FullName = updateContactRequest.FullName;
-        //        contact.Phone = updateContactRequest.Phone;
-        //        await dbContext.SaveChangesAsync();
-        //    }
-        //    serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
+        public async Task<ServiceResponse<GetContactsResponseDto>> UpdateContacts(UpdateContactRequestDto updateContactRequest)
+        {
+            var serviceResponse = new ServiceResponse<GetContactsResponseDto>();
+            var contact = await dbContext.Contacts.FirstAsync(c => c.Id == updateContactRequest.Id);
+            var mapContact = mapper.Map(contact, updateContactRequest);
+            await dbContext.SaveChangesAsync();
 
-        //    return serviceResponse;
-        //}
+            serviceResponse.Data = mapper.Map<GetContactsResponseDto>(contact);
+
+            return serviceResponse;
+        }
     }
 }

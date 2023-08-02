@@ -9,7 +9,7 @@ namespace ContactsAPI.Services.ContactService
         Task<ServiceResponse<GetContactsResponseDto>> GetContactById([FromRoute] Guid id);
         Task<ServiceResponse<List<GetContactsResponseDto>>> GetAllContacts();
         Task<ServiceResponse<GetContactsResponseDto>> AddContactRequest(AddContactRequestDto addContactRequest);
-      //  Task<ServiceResponse<GetContactsResponseDto>> UpdateContact([FromRoute] Guid id, UpdateContactRequestDto updateContactRequest);
+        Task<ServiceResponse<GetContactsResponseDto>> UpdateContacts(UpdateContactRequestDto updateContactRequest);
         Task<ServiceResponse<GetContactsResponseDto>> DeleteContact([FromRoute] Guid id);
     }
 }
